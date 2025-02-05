@@ -27,16 +27,8 @@ let skibidiBoosts = 0;
 let skibidiBoostCost = 10000;
 let skibidiBoostMult = 1;
 let passiveModeOn = true;
-let couponAmount = 0;
-let couponEffectWeights = {
-    getSkibidi:3.5,
-    cheaperUpgrades:1.5,
-    crits:2,
-    productionBoost:2,
-    moreCoupons:1,
-};
-let currentWeightSum = 10;
 let netSkibidiWorth = 0;
+let activeEffects = [];
 
 const skibidiCountElement = document.getElementById('skibidi-count');
 const skibidiButton = document.getElementById('increment-skibidi-button');
@@ -45,8 +37,6 @@ const upgradeInfoElement = document.getElementById('upgrade-info');
 const skibidiBoostButton = document.getElementById('skibidi-boost-button');
 const boostInfoCostElement = document.getElementById('skibidi-boost-info-1');
 const boostInfoMultElement = document.getElementById('skibidi-boost-info-2');
-const skibidiCouponButton = document.getElementById('skibidi-coupon-button');
-const skibidiCouponInfoElement = document.getElementById('skibidi-coupon-info-1');
 const playerIdentity = document.getElementById('playerIdentity');
 
 function saveGame() {
@@ -63,6 +53,7 @@ function saveGame() {
         couponEffectWeights,
         currentWeightSum,
         netSkibidiWorth,
+        activeEffects,
     };
     localStorage.setItem('skibidiGame', JSON.stringify(gameState));
 }
@@ -83,6 +74,7 @@ function loadGame() {
         couponEffectWeights = gameState.couponEffectWeights;
         currentWeightSum = gameState.currentWeightSum;
         netSkibidiWorth = gameState.netSkibidiWorth;
+        activeEffects = []; //TODO: preserve timers
     }
     updateUI();
 }
@@ -106,6 +98,7 @@ function resetGame() {
     };
     currentWeightSum = 10;
     netSkibidiWorth = 0;
+    activeEffects = [];
     updateUI();
 }
 
@@ -150,20 +143,13 @@ function checkLockedFeatures() {
     }
 }
 
-function getCouponEffectWeightSum() {
-    let sum = 0;
-    for (let key of Object.keys(couponEffectWeights)) {
-        sum += couponEffectWeights[key];
-    }
-    return sum;
-}
-
-function incrementSkibidi(multiplier = 1) {
-    skibidi += skibidiPerClick * skibidiBoostMult * multiplier;
-    netSkibidiWorth += skibidiPerClick * skibidiBoostMult * multiplier;
+function incrementSkibidi(multiplier = 1, manual = 0) {
+    skibidi += skibidiPerClick * skibidiBoostMult * multiplier * skibidiMultEffect;
+    netSkibidiWorth += skibidiPerClick * skibidiBoostMult * multiplier * skibidiMultEffect;
     for (i = 0; i < multiplier; i++) {
-        if (netSkibidiWorth >= 1e9 && couponAmount < 1 && Math.random() <= 0.003) {
+        if (netSkibidiWorth >= 1e9 && couponAmount < 1 && manual == 1 && Math.random() <= 0.003) {
             couponAmount++;
+            showNotification('You found a Coupon!', 'yellow');
         } 
     }
     updateUI();
@@ -189,22 +175,10 @@ function buySkibidiBoost() {
     }
 }
 
-function moreSkibidi() {incrementSkibidi(100)};
-
-function doSkibidiCouponRoll() {
-    if (couponAmount >= 0) {
-        currentWeightSum = getCouponEffectWeightSum();
-        couponAmount--;
-        let random = Math.random();
-        if (0 < random && random < couponEffectWeights['getSkibidi']/currentWeightSum) {
-            moreSkibidi();
-        } else {};
-        updateUI();
-    }
-}
+function moreSkibidi() {incrementSkibidi(100, 0)};
 
 skibidiButton.addEventListener('click', () => {
-    incrementSkibidi();
+    incrementSkibidi(1, 1);
 });
 
 upgradeButton.addEventListener('click', () => {
@@ -221,7 +195,7 @@ skibidiCouponButton.addEventListener('click', () => {
 
 setInterval(() => {
     if (passiveModeOn) {
-        incrementSkibidi();
+        incrementSkibidi(1, 0);
     }
     saveGame();
 }, 1000);

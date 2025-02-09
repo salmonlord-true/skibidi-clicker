@@ -50,6 +50,100 @@ body {
     right: 10%;
 }
 
+#skibidi-scrap-artifacts {
+    position: absolute;
+    top: 500px;
+    width: 85%;
+    right: 7.5%;
+    display: none;
+    z-index: 20;
+    background-color: rgba(192, 127, 30, 0);
+    text-align: left;
+    border-radius: 10px;
+    border-color:rgb(92, 42, 7);
+    box-shadow: 0 0 0px rgba(0, 0, 0, 0);
+}
+
+#skibidi-scrap {
+    position: relative;
+    width: 300px;
+    left: 10%;
+    background-color: #d6b584;
+    border-radius: 5px;
+    border-color:rgb(112, 53, 11);
+    border-style: solid;
+    padding-top: 0px;
+    padding-bottom: 3px;
+}
+
+#skibidi-scrap-upgrades {
+    margin: 10px;
+    position: relative;
+    height: 200px;
+    width: 40%;
+    font-size: 0.9em;
+    background-color: #e6c99f;
+    box-shadow: 0 0 20px rgba(0, 0, 0, 0.3);
+    border-style: solid;
+    border-radius: 5px;
+    border-color:rgb(112, 53, 11);
+}
+
+#skibidi-scrap-upgrade-1 {
+    position: absolute;
+    margin: 5px;
+    top: 0%;
+    left: 0%;
+}
+
+.skibidi-scrap-upgrade-button {
+    width: 300px;
+    margin-bottom: 2px;
+}
+
+#skibidi-scrap-upgrade-2 {
+    position: absolute;
+    margin: 5px;
+    top: 0%;
+    right: 0%;
+}
+
+#skibidi-scrap-upgrade-3 {
+    position: absolute;
+    margin: 5px;
+    bottom: 0%;
+    left: 0%;
+}
+
+#skibidi-scrap-upgrade-4 {
+    position: absolute;
+    margin: 5px;
+    bottom: 0%;
+    right: 0%;
+}
+
+#skibidi-scrap-locked {
+    position: absolute;
+    top: 550px;
+    width: 80%;
+    right: 10%;
+}
+
+#skibidi-scrap-info {
+    font-size: 1.5em;
+}
+
+#skibidi-scrap-button {
+    height: 2.6em;
+    width: 12em;
+    background-color: #c03c2a;
+}
+
+#skibidi-scrap-info-2 {
+    font-size: 1.2em;
+    margin-top: 0px;
+}
+
 #notification-container {
     position: fixed;
     top: 20px;
@@ -59,6 +153,7 @@ body {
     gap: 10px;
     z-index: 20;
 }
+
 
 .notification {
     top: -200px;
@@ -109,7 +204,15 @@ button:hover {
     background-color: #0056b3;
 }
 
+#skibidi-scrap-button:hover {
+    background-color: #972a17;
+}
+
 button:disabled {
+    background-color: #7c838f;
+}
+
+#skibidi-scrap-button:disabled {
     background-color: #7c838f;
 }
 

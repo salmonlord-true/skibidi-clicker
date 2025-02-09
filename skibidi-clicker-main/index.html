@@ -11,12 +11,15 @@
     <div class="container" id="header"> 
         <p id="playerIdentity">You are a Lil Baby Skibidi 👶🏼🚽</p>
     </div>
+
     <h1 id="skibidi-count">Skibidi: 0</h1>
+
     <div class="container" id="increment-power"> 
         <button id="increment-skibidi-button">Increment Skibidi</button>
         <button id="upgrade-button">Increase Skibidi Power</button>
         <p id="upgrade-info">Upgrade cost: 50 | Power: 0</p>
     </div>
+
     <div class="container" id="skibidi-boost"> 
         <button id="skibidi-boost-button">Perform a Skibiboost</button>
         <p id="skibidi-boost-info-1">Cost: 10 K</p>
@@ -25,6 +28,7 @@
     <div class="container" id="skibidi-boost-locked"> 
         <h2>Locked (Req = 10K total skibidi)</h2>
     </div>
+
     <div class="container" id="skibidi-coupon"> 
         <button id="skibidi-coupon-button">Spend a Skibidi Coupon</button>
         <p id="skibidi-coupon-info-1">Current amount: 0/1</p>
@@ -32,7 +36,38 @@
     <div class="container" id="skibidi-coupon-locked"> 
         <h2>Locked (Req = 1B total skibidi)</h2>
     </div>
+
+    <div class="container" id="skibidi-scrap-artifacts"> 
+        <div class="container" id="skibidi-scrap">
+            <h3 id="skibidi-scrap-info">You have 0 Skibidi Scrap.</h3>
+            <button id="skibidi-scrap-button">Get Skibidi Scrap</button>
+            <p id="skibidi-scrap-info-2">(Cost: 1 B)</p>
+        </div>
+        <div class="container" id="skibidi-scrap-upgrades">
+            <span id="skibidi-scrap-upgrade-1">
+                <button id="skibidi-scrap-upgrade-1-button" class="skibidi-scrap-upgrade-button">Skibidi gain x1.2</button>
+                <p id="skibidi-scrap-upgrade-1-info">Cost: 4 Scrap | Bought: 0 (Effect: x1)</p>
+            </span>
+            <span id="skibidi-scrap-upgrade-2">
+                <button id="skibidi-scrap-upgrade-2-button"class="skibidi-scrap-upgrade-button">Increase max coupon amount by 1</button>
+                <p id="skibidi-scrap-upgrade-2-info">Cost: 6 Scrap | Bought: 0</p>
+            </span>
+            <span id="skibidi-scrap-upgrade-3">
+                <button id="skibidi-scrap-upgrade-3-button"class="skibidi-scrap-upgrade-button">Increase upgrade bulkbuy amount</button>
+                <p id="skibidi-scrap-upgrade-3-info">Cost: 6 Scrap | Bought: 0 (Effect: 1)</p>
+            </span>
+            <span id="skibidi-scrap-upgrade-4">
+                <button id="skibidi-scrap-upgrade-4-button"class="skibidi-scrap-upgrade-button">Increase skibiboost bulkbuy amount</button>
+                <p id="skibidi-scrap-upgrade-4-info">Cost: 6 Scrap | Bought: 0 (Effect: 1) </p>
+            </span>
+        </div>
+    </div>
+    <div class="container" id="skibidi-scrap-locked"> 
+        <h2>Locked (Req = 5B total skibidi)</h2>
+    </div>
+
     <div id="notification-container"></div>
+    <script src="scrap.js"></script>
     <script src="coupons.js"></script>
     <script src="notifications.js"></script>
     <script src="script.js"></script>

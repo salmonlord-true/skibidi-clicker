@@ -81,10 +81,14 @@ function game_loadGame() {
         game_effs_currentWeightSum = gameState.game_effs_currentWeightSum;
         game_netSkibidiWorth = gameState.game_netSkibidiWorth;
         game_scrap_skibidiScrap = gameState.game_scrap_skibidiScrap;
-        game_scrap_skibidiGainSU = gameState.game_scrap_skibidiGainSU;
-        game_scrap_maxCouponsSU = gameState.game_scrap_maxCouponsSU;
-        game_scrap_upgradeBulkSU = gameState.game_scrap_upgradeBulkSU;
-        game_scrap_boostBulkSU = gameState.game_scrap_boostBulkSU;
+        const sgSU = gameState.game_scrap_skibidiGainSU;
+        const mcSU = gameState.game_scrap_maxCouponsSU;
+        const ubSU = gameState.game_scrap_upgradeBulkSU;
+        const bbSU = gameState.game_scrap_boostBulkSU;
+        game_scrap_skibidiGainSU = new ScrapUpgrade(sgSU['baseCost'], sgSU['cost'], sgSU['amount'], (x) => (x+2));
+        game_scrap_maxCouponsSU = new ScrapUpgrade(mcSU['baseCost'], mcSU['cost'], mcSU['amount'], (x) => (x+3));
+        game_scrap_upgradeBulkSU = new ScrapUpgrade(ubSU['baseCost'], ubSU['cost'], ubSU['amount'], (x) => (x+2));
+        game_scrap_boostBulkSU = new ScrapUpgrade(bbSU['baseCost'], bbSU['cost'], bbSU['amount'], (x) => (x+2));
         Effect.effects = []; //TODO: preserve timers. or not.
         Effect.updateMults();
     }
@@ -112,10 +116,10 @@ function game_resetGame() {
     game_netSkibidiWorth = 0;
     game_scrap_skibidiScrap = 0;
     Effect.effects = [];
-    //game_scrap_skibidiGainSU.reset();
-    //game_scrap_maxCouponsSU.reset();
-    //game_scrap_upgradeBulkSU.reset();
-    //game_scrap_boostBulkSU.reset();
+    game_scrap_skibidiGainSU.reset();
+    game_scrap_maxCouponsSU.reset();
+    game_scrap_upgradeBulkSU.reset();
+    game_scrap_boostBulkSU.reset();
 }
 
 function game_updateUI() {

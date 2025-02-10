@@ -19,10 +19,10 @@ function game_scrap_buySkibidiScrap() {
 
 class ScrapUpgrade {
 
-    constructor(baseCost, scaling = (x) => (x+2)) {
+    constructor(baseCost, currentCost = baseCost, currentAmount = 0, scaling = (x) => (x+2)) {
         this.baseCost = baseCost;
-        this.cost = baseCost;
-        this.amount = 0;
+        this.cost = currentCost;
+        this.currentAmount = 0;
         this.scaling = scaling;
     }
 
@@ -42,8 +42,7 @@ class ScrapUpgrade {
     }
 }
 
-game_scrap_skibidiGainSU = new ScrapUpgrade(4, (x) => (x+2));
-console.log(game_scrap_skibidiGainSU.reset());
-game_scrap_maxCouponsSU = new ScrapUpgrade(6, (x) => (x+3));
-game_scrap_upgradeBulkSU = new ScrapUpgrade(6, (x) => (x+2));
-game_scrap_boostBulkSU = new ScrapUpgrade(6, (x) => (x+2));
+let game_scrap_skibidiGainSU;
+let game_scrap_maxCouponsSU;
+let game_scrap_upgradeBulkSU;
+let game_scrap_boostBulkSU;

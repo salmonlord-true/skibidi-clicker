@@ -65,11 +65,23 @@
     <div class="container" id="skibidi-scrap-locked"> 
         <h2>Locked (Req = 5B total skibidi)</h2>
     </div>
+
     <div id="notification-container"></div>
-    <script src="artifacts.js"></script>
+    <div class="container" id="save-notification">
+        <h2>It appears that, either:</h2>
+        <p>1. You don't have a save on this device, or</p>
+        <p>2. Your save is not from the newest version, or</p>
+        <p>3. Your save is corrupted.</p>
+        <p>Please choose from the following:</p>
+        <button id="save-notification-reset">Reset save</button>
+        <button id="save-notification-default">Use default values</button>
+        <button id="save-notification-continue">Continue</button>
+    </div>
+
     <script src="scrap.js"></script>
     <script src="coupons.js"></script>
     <script src="notifications.js"></script>
+    <script src="saveload.js"></script>
     <script src="script.js"></script>
 </body>
 </html> 

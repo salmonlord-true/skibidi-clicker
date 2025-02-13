@@ -80,22 +80,22 @@ class Effect {
         };
         if (effect.type == 'skibidiGain') {
             game_incrementSkibidi(power, 0);
-            if (announce) {showNotification('Effect: +100sec worth of Skibidi production!', 'green')};
+            if (announce) {new Notification('Effect: +100sec worth of Skibidi production!', 'green')};
             return;
         }
         Effect.effects.push(effect);
         if (announce) {
-            if (effect.type == 'skibidiGainBoost') {showNotification('Effect: Skibidi gain +30% for 30sec!', 'green')};
-            if (effect.type == 'upgradeCostReduction') {showNotification('Effect: Upgrade costs reduced by 15% for 10sec!', 'green')};
-            if (effect.type == 'critChance') {showNotification('Effect: 10% chance to get +100% skibidi/click for 30sec!', 'green')};
-            if (effect.type == 'couponChanceBoost') {showNotification('Effect: 2x chance to get a coupon for 30sec!', 'green')};
+            if (effect.type == 'skibidiGainBoost') {new Notification('Effect: Skibidi gain +30% for 30sec!', 'green')};
+            if (effect.type == 'upgradeCostReduction') {new Notification('Effect: Upgrade costs reduced by 15% for 10sec!', 'green')};
+            if (effect.type == 'critChance') {new Notification('Effect: 10% chance to get +100% skibidi/click for 30sec!', 'green')};
+            if (effect.type == 'couponChanceBoost') {new Notification('Effect: 2x chance to get a coupon for 30sec!', 'green')};
         };
         setTimeout(() => {
             Effect.effects.splice(Effect.effects.findIndex((element) => {element === effect}), 1);
-            if (effect.type == 'skibidiGainBoost') {showNotification('Skibidi production multiplier is over!', 'red')};
-            if (effect.type == 'upgradeCostReduction') {showNotification('Upgrade cost reduction is over!', 'red')};
-            if (effect.type == 'critChance') {showNotification('Crit chance is over!', 'red')};
-            if (effect.type == 'couponChanceBoost') {showNotification('Coupon chance increase is over!', 'red')};
+            if (effect.type == 'skibidiGainBoost') {new Notification('Skibidi production multiplier is over!', 'red')};
+            if (effect.type == 'upgradeCostReduction') {new Notification('Upgrade cost reduction is over!', 'red')};
+            if (effect.type == 'critChance') {new Notification('Crit chance is over!', 'red')};
+            if (effect.type == 'couponChanceBoost') {new Notification('Coupon chance increase is over!', 'red')};
             Effect.updateMults();
         }, duration)
         Effect.updateMults();

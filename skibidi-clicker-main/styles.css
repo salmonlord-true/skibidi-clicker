@@ -80,7 +80,7 @@ body {
     margin: 10px;
     position: relative;
     height: 200px;
-    width: 40%;
+    width: 600px;
     font-size: 0.9em;
     background-color: #e6c99f;
     box-shadow: 0 0 20px rgba(0, 0, 0, 0.3);
@@ -234,4 +234,13 @@ button:disabled {
 @keyframes fadeOut {
     from {opacity: 1;}
     to {opacity: 0;}
+}
+
+#save-notification {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    margin-left: -280px;
+    margin-top: -140px;
+    z-index:300;
 }

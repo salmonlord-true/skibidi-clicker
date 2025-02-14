@@ -40,6 +40,33 @@ const game_const_boostInfoCostElement = document.getElementById('skibidi-boost-i
 const game_const_boostInfoMultElement = document.getElementById('skibidi-boost-info-2');
 const game_const_playerIdentity = document.getElementById('playerIdentity');
 
+const game_const_var_defaults = {
+    game_skibidi: 0,
+    game_currentUpgradeCost: 50,
+    game_baseUpgradeCost: 50,
+    game_baseSkibidiPerClick: 1,
+    game_skibidiBoosts: 0,
+    game_baseSkibidiBoostCost: 10000,
+    game_currentSkibidiBoostCost: 10000,
+    game_skibidiBoostMult: 1,
+    game_passiveModeOn: true,
+    game_effs_couponEffectWeights: {
+        getSkibidi:3.5,
+        cheaperUpgrades:1.5,
+        crits:2,
+        productionBoost:2,
+        moreCoupons:1,
+    },
+    game_effs_couponAmount: 0,
+    game_effs_currentWeightSum: 10,
+    game_scrap_skibidiScrap: 0,
+    game_netSkibidiWorth: game_skibidi + game_upgrades * game_baseUpgradeCost / 2 + game_skibidiBoosts * game_baseUpgradeCost / 2, //estimation. why am i doing this no one will ever have this problem
+    game_scrap_skibidiGainSU: new ScrapUpgrade(4, 4, 0, (x) => (x+2)),
+    game_scrap_maxCouponsSU: new ScrapUpgrade(6, 6, 0, (x) => (x+3)),
+    game_scrap_upgradeBulkSU: new ScrapUpgrade(6, 6, 0, (x) => (x+2)),
+    game_scrap_boostBulkSU: new ScrapUpgrade(6, 6, 0, (x) => (x+2)),
+}
+
 // function game_saveGame() {
 //     const gameState = {
 //         game_skibidi: game_skibidi,

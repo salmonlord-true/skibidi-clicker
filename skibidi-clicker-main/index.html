@@ -67,15 +67,15 @@
     </div>
 
     <div id="notification-container"></div>
-    <div class="container" id="save-notification">
+    <div class="container" id="save-notification" style="display:none">
         <h2>It appears that, either:</h2>
         <p>1. You don't have a save on this device, or</p>
         <p>2. Your save is not from the newest version, or</p>
         <p>3. Your save is corrupted.</p>
         <p>Please choose from the following:</p>
-        <button id="save-notification-reset">Reset save</button>
-        <button id="save-notification-default">Use default values</button>
-        <button id="save-notification-continue">Continue</button>
+        <button id="save-notification-reset" onclick=badSaveReset()>Reset save</button>
+        <button id="save-notification-default" onclick=badSaveDefault()>Use default values</button>
+        <button id="save-notification-continue" onclick=badSaveContinue()>Continue</button>
     </div>
 
     <script src="scrap.js"></script>

@@ -1,65 +1,53 @@
-const game_const_vars = [
-    game_skibidi,
-    game_upgrades,
-    game_upgradeCost,
-    game_skibidiPerClick,
-    game_skibidiBoosts,
-    game_skibidiBoostCost,
-    game_baseSkibidiBoostCost,
-    game_skibidiBoostMult,
-    game_passiveModeOn,
-    game_effs_couponEffectWeights,
-    game_effs_couponAmount,
-    game_effs_currentWeightSum,
-    game_netSkibidiWorth,
-    game_scrap_skibidiScrap,
-    game_scrap_skibidiGainSU,
-    game_scrap_maxCouponsSU,
-    game_scrap_upgradeBulkSU,
-    game_scrap_boostBulkSU,
-]
+const save_notif = document.getElementById('save-notification');
 
-function showBadSaveNotification() {
-    
+function showBadSaveNotif() {
+    save_notif.style = 'display: inline-block';
 }
 
+function badSaveReset() {
+    game_resetGame();
+    game_saveGame();
+    save_notif.style = 'display: none';
+    game_loadGame();
+}
+
+function badSaveDefault() {
+    for(i of Object.keys(game_const_var_defaults)) {
+        if (eval(i) === undefined || eval(i) === NaN || eval(i) === null) { // witchery (it dosn't even work)
+            eval(i = game_const_var_defaults[i]);
+        }
+    }
+    game_saveGame();
+    save_notif.style = 'display: none';
+    game_loadGame();
+}
+
+function badSaveContinue() {
+    save_notif.style = 'display: none';
+}
+
+
 function game_saveGame() {
-    const gameState = {
-        game_skibidi: game_skibidi,
-        game_upgrades: game_upgrades,
-        game_upgradeCost: game_baseUpgradeCost,
-        game_skibidiPerClick: game_baseSkibidiPerClick,
-        game_skibidiBoosts: game_skibidiBoosts,
-        game_skibidiBoostCost: game_baseSkibidiBoostCost,
-        game_baseSkibidiBoostCost: game_baseSkibidiBoostCost,
-        game_skibidiBoostMult: game_skibidiBoostMult,
-        game_passiveModeOn: game_passiveModeOn,
-        game_effs_couponEffectWeights: game_effs_couponEffectWeights,
-        game_effs_couponAmount: game_effs_couponAmount,
-        game_effs_currentWeightSum: game_effs_currentWeightSum,
-        game_netSkibidiWorth: game_netSkibidiWorth,
-        game_scrap_skibidiScrap: game_scrap_skibidiScrap,
-        game_scrap_skibidiGainSU: game_scrap_skibidiGainSU,
-        game_scrap_maxCouponsSU: game_scrap_maxCouponsSU,
-        game_scrap_upgradeBulkSU: game_scrap_upgradeBulkSU,
-        game_scrap_boostBulkSU: game_scrap_boostBulkSU,
+    const gameState = {};
+    for (i of Object.keys(game_const_var_defaults)) {
+        gameState[i] = eval(i); // sure hope it works
     };
     localStorage.setItem('skibidiGame', JSON.stringify(gameState));
 }
 
-async function game_loadGame() {
+function game_loadGame() {
     let gameState = localStorage.getItem('skibidiGame');
     if (gameState) {
         gameState = JSON.parse(gameState);
-        for (value of game_const_vars) {
+        for (value of Object.keys(game_const_var_defaults)) {
             if (gameState[value] === undefined || gameState[value] === NaN || gameState[value] === null) {
-                await showBadSaveNotification();
+                showBadSaveNotif();
             }
         }
         game_skibidi = gameState.game_skibidi;
         game_upgrades = gameState.game_upgrades;
-        game_baseUpgradeCost = gameState.game_upgradeCost;
-        game_baseSkibidiPerClick = gameState.game_skibidiPerClick;
+        game_baseUpgradeCost = gameState.game_baseUpgradeCost;
+        game_baseSkibidiPerClick = gameState.game_baseSkibidiPerClick;
         game_skibidiBoosts = gameState.game_skibidiBoosts;
         game_baseSkibidiBoostCost = gameState.game_baseSkibidiBoostCost;
         game_skibidiBoostMult = gameState.game_skibidiBoostMult;
@@ -104,8 +92,8 @@ function game_resetGame() {
     game_netSkibidiWorth = 0;
     game_scrap_skibidiScrap = 0;
     Effect.effects = [];
-    game_scrap_skibidiGainSU.reset();
-    game_scrap_maxCouponsSU.reset();
-    game_scrap_upgradeBulkSU.reset();
-    game_scrap_boostBulkSU.reset();
+    game_scrap_skibidiGainSU = new ScrapUpgrade(4, 4, 0, (x) => (x+2));
+    game_scrap_maxCouponsSU = new ScrapUpgrade(6, 6, 0, (x) => (x+3));
+    game_scrap_upgradeBulkSU = new ScrapUpgrade(6, 6, 0, (x) => (x+2));
+    game_scrap_boostBulkSU = new ScrapUpgrade(6, 6, 0, (x) => (x+2));
 }

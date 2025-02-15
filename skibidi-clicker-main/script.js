@@ -140,14 +140,40 @@ function game_incrementSkibidi(multiplier = 1, manual = 0) {
     game_updateUI();
 }
 
-function game_buySkibidiPower() {
-    if (game_skibidi >= game_currentUpgradeCost) {
-        game_skibidi -= game_currentUpgradeCost;
-        game_baseUpgradeCost += 50 + game_upgrades;
-        game_upgrades++;
-        game_baseSkibidiPerClick++;
-        game_updateUI();
+function game_buySkibidiPower(amount = 1) {
+    if (amount < 50) {
+        for (i = 0; i < amount; i++) {
+            if (game_skibidi >= game_currentUpgradeCost) {
+                game_skibidi -= game_currentUpgradeCost;
+                game_baseUpgradeCost += 50 + game_upgrades;
+                game_upgrades++;
+                game_baseSkibidiPerClick++;
+                game_updateUI();
+            } else return;
+        }
+    } else { //approximation for bulk purchases
+        let purchases = Math.floor();
+        let totalSkibidiSpent = game_skibidi + costFunc(game_upgrades);
+    } 
+}
+
+function approximateRoots(equName, rhs, steps) { // equation name out of 'skibipower' and 'skibiboost'; right-hand side; approximation steps (Newton method)
+    let costFunc, costFuncDeriv, guess;
+    if (equName == 'skibipower') {
+        costFunc = (x) => (1/6 * x**3 + 24.5 * x**2 + 76/3 * x - rhs);
+        costFuncDeriv = (x) => (1/2 * x**2 + 49 * x + 76/3);
+        guess = Math.cbrt(6*rhs);
     }
+    if (equName == 'skibiboost') {
+        costFunc = (x) => (1/6 * x**3 + 24.5 * x**2 + 76/3 * x - rhs);
+        costFuncDeriv = (x) => (1/2 * x**2 + 49 * x + 76/3);
+        guess = Math.cbrt(6*rhs);
+    }
+    for (i = 0; i < steps; i++) {
+        console.log(guess);
+        guess = guess - costFunc(guess)/costFuncDeriv(guess);
+    }
+    return guess;
 }
 
 function game_buySkibidiBoost() {
@@ -159,8 +185,6 @@ function game_buySkibidiBoost() {
         game_updateUI();
     }
 }
-
-function game_moreSkibidi() {game_incrementSkibidi(100, 0)};
 
 game_const_skibidiButton.addEventListener('click', () => {
     game_incrementSkibidi(1, 1);
@@ -183,19 +207,19 @@ game_const_skibidiScrapButton.addEventListener('click', () => {
 });
 
 game_const_skibidiScrapUpgrade1Button.addEventListener('click', () => {
-    game_scrap_buySkibidiScrap();
+    game_scrap_skibidiGainSU.buyUpgrade(1);
 });
 
 game_const_skibidiScrapUpgrade2Button.addEventListener('click', () => {
-    game_scrap_buySkibidiScrap();
+    game_scrap_maxCouponsSU.buyUpgrade(1);
 });
 
 game_const_skibidiScrapUpgrade3Button.addEventListener('click', () => {
-    game_scrap_buySkibidiScrap();
+    game_scrap_upgradeBulkSU.buyUpgrade(1);
 });
 
 game_const_skibidiScrapUpgrade4Button.addEventListener('click', () => {
-    game_scrap_buySkibidiScrap();
+    game_scrap_boostBulkSU.buyUpgrade(1);
 });
 
 setInterval(() => {

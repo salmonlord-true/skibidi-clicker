@@ -15,6 +15,10 @@ function updateAllVariables(info = {}, mode = 'default') {
         case 'default': game_skibidi = info.game_skibidi ?? 0; break;
         case 'reset': game_skibidi = 0; break;
         case 'force': game_skibidi = info.game_skibidi; break;}
+    switch (mode) {                                                                     //game_skibidi
+        case 'default': game_upgrades = info.game_upgrades ?? 0; break;
+        case 'reset': game_upgrades = 0; break;
+        case 'force': game_upgrades = info.game_upgrades; break;}
     switch (mode) {                                                                      //game_baseUpgradeCost
         case 'default': game_baseUpgradeCost = info.game_baseUpgradeCost ?? 50; break;s
         case 'reset': game_baseUpgradeCost = 50; break;
@@ -115,6 +119,7 @@ function updateAllVariables(info = {}, mode = 'default') {
 function getAllVariables() {
     let info = {
         game_skibidi: game_skibidi,
+        game_upgrades: game_upgrades,
         game_baseUpgradeCost: game_baseUpgradeCost,
         game_baseSkibidiPerClick: game_baseSkibidiPerClick,
         game_skibidiBoosts: game_skibidiBoosts,

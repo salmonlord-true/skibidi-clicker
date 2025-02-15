@@ -22,7 +22,7 @@ class ScrapUpgrade {
     constructor(baseCost, currentCost = baseCost, currentAmount = 0, scaling = (x) => (x+2)) {
         this.baseCost = baseCost;
         this.cost = currentCost;
-        this.currentAmount = 0;
+        this.currentAmount = currentAmount;
         this.scaling = scaling;
     }
 

@@ -3,12 +3,12 @@ function choose(arg1, arg2) {
 }
 
 class Artifact {
-    constructor(kind, effects, starLevel, weight, isActive = true) {
+    constructor(kind, effects, starLevel, weight, id, isActive = true) {
         this.kind = kind;
         this.effects = effects;
         this.starLevel = starLevel;
         this.weight = weight;
-        this.id = Math.random();
+        this.id = (id == undefined? Math.random() : id);
     };
 
     static getCombined(art1, art2) {
@@ -34,9 +34,9 @@ class Artifact {
 };
 
 class ArtifactStorage {
-    constructor(length) {
+    constructor(length, artifacts = []) {
         this.length = length;
-        this.artifacts = [];
+        this.artifacts = artifacts;
     }
 
     addArtifact(art) {
@@ -65,6 +65,12 @@ class ArtifactStorage {
             }
         }
         throw 'notFound';
+    }
+
+    updateMults() {
+        for (let art of this.artifacts) {
+            
+        }
     }
 }
 

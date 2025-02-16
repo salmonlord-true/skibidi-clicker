@@ -152,26 +152,29 @@ function game_buySkibidiPower(amount = 1) {
             } else return;
         }
     } else { //approximation for bulk purchases
-        let purchases = Math.floor();
-        let totalSkibidiSpent = game_skibidi + costFunc(game_upgrades);
+        approximateRoots('skibipower', )
     } 
 }
 
-function approximateRoots(equName, rhs, steps) { // equation name out of 'skibipower' and 'skibiboost'; right-hand side; approximation steps (Newton method)
-    let costFunc, costFuncDeriv, guess;
+
+function approximateRoots(equName, rhs, steps, spent=undefined, guess=undefined) { // equation name out of 'skibipower' and 'skibiboost'; right-hand side; approximation steps (Newton method)
+    let costFunc, costFuncDeriv;         // 6 steps for skibipower, 8 steps for skibiboost.
     if (equName == 'skibipower') {
-        costFunc = (x) => (1/6 * x**3 + 24.5 * x**2 + 76/3 * x - rhs);
+        spent = spent ?? (1/6 * game_upgrades**3 + 24.5 * game_upgrades**2 + 76/3 * game_upgrades);
+        costFunc = (x) => (1/6 * x**3 + 24.5 * x**2 + 76/3 * x - (rhs + spent));
         costFuncDeriv = (x) => (1/2 * x**2 + 49 * x + 76/3);
-        guess = Math.cbrt(6*rhs);
+        guess = guess ?? Math.cbrt(6*rhs);
     }
     if (equName == 'skibiboost') {
-        costFunc = (x) => (1/6 * x**3 + 24.5 * x**2 + 76/3 * x - rhs);
-        costFuncDeriv = (x) => (1/2 * x**2 + 49 * x + 76/3);
-        guess = Math.cbrt(6*rhs);
+        //costFunc = (x) => 10000*((x-2)**2.2/2.2 + (x-2)**1.2/2 + 0.045 + x); // cost of n'th skibiboost
+        spent = spent ?? 10000*(0.045*game_skibidiBoosts + game_skibidiBoosts*(game_skibidiBoosts+1)/2 + 0.5*((game_skibidiBoosts-2)**2.2/2.2 + (game_skibidiBoosts-2)**1.2/2 + 0.045) + 1/2.2*((game_skibidiBoosts-2)**3.2/3.2 + (game_skibidiBoosts-2)**2.2/2 + 0.019*game_skibidiBoosts**1.2));
+        costFunc = (x) => (10000*(0.045*x + x*(x+1)/2 + 0.5*((x-2)**2.2/2.2 + (x-2)**1.2/2 + 0.045) + 1/2.2*((x-2)**3.2/3.2 + (x-2)**2.2/2 + 0.019*x**1.2)) - (rhs + spent)); // cumulative cost of first n skibiboosts
+        costFuncDeriv = (x) => (10000*(0.045 + x+0.5 + 0.5*((x-2)**1.2/2.2*2.2 + (x-2)**0.2/2*1.2) + 1/2.2*((x-2)**2.2/3.2*3.2 + (x-2)*1.2/2*2.2 + 0.019*x**0.2*1.2)));
+        guess = guess ?? rhs**(1/3.2)/10;   //note: can return NaN if trying to purchase a very small amount of boosts
     }
     for (i = 0; i < steps; i++) {
         console.log(guess);
-        guess = guess - costFunc(guess)/costFuncDeriv(guess);
+        guess = guess - (costFunc(guess)/costFuncDeriv(guess) != NaN? costFunc(guess)/costFuncDeriv(guess) : -1);
     }
     return guess;
 }

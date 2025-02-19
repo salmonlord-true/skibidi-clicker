@@ -53,20 +53,22 @@
                 <p id="skibidi-scrap-upgrade-2-info">Cost: 6 Scrap | Bought: 0</p>
             </span>
             <span id="skibidi-scrap-upgrade-3">
-                <button id="skibidi-scrap-upgrade-3-button"class="skibidi-scrap-upgrade-button">Increase upgrade bulkbuy amount</button>
+                <button id="skibidi-scrap-upgrade-3-button" class="skibidi-scrap-upgrade-button">Increase upgrade bulkbuy amount</button>
                 <p id="skibidi-scrap-upgrade-3-info">Cost: 6 Scrap | Bought: 0 (Effect: 1)</p>
             </span>
             <span id="skibidi-scrap-upgrade-4">
-                <button id="skibidi-scrap-upgrade-4-button"class="skibidi-scrap-upgrade-button">Increase skibiboost bulkbuy amount</button>
-                <p id="skibidi-scrap-upgrade-4-info">Cost: 6 Scrap | Bought: 0 (Effect: 1) </p>
+                <button id="skibidi-scrap-upgrade-4-button" class="skibidi-scrap-upgrade-button">Increase skibiboost bulkbuy amount</button>
+                <p id="skibidi-scrap-upgrade-4-info">Cost: 6 Scrap | Bought: 0 (Effect: 1)</p>
             </span>
         </div>
     </div>
+    
     <div class="container" id="skibidi-scrap-locked"> 
         <h2>Locked (Req = 5B total skibidi)</h2>
     </div>
 
     <div id="notification-container"></div>
+
     <div class="container" id="save-notification" style="display:none">
         <h2>It appears that, either:</h2>
         <p>1. You don't have a save on this device, or</p>
@@ -77,6 +79,13 @@
         <button id="save-notification-default" onclick=badSaveDefault()>Use default values</button>
         <button id="save-notification-continue" onclick=badSaveContinue()>Continue</button>
     </div>
+
+    <div class="container" id="offline-progress-notification" style="display:none">
+        <h2 id="offline-notif-time">Offline for 0 seconds. You have obtained:</h2>
+        <p id="offline-notif-skibidi">+0 Skibidi</p>
+        <button id="save-notification-continue" onclick=offlineContinue()>Continue</button>
+    </div>
+
     <script src="artifacts.js"></script>
     <script src="scrap.js"></script>
     <script src="coupons.js"></script>

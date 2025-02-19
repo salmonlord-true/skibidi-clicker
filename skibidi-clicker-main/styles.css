@@ -221,11 +221,6 @@ button:disabled {
     margin-top: 20px;
 }
 
-@keyframes slideIn {
-    from {top: -200px;}
-    to {top: 20px;}
-}
-
 @keyframes fadeIn {
     from {opacity: 0;}
     to {opacity: 1;}
@@ -243,4 +238,13 @@ button:disabled {
     margin-left: -280px;
     margin-top: -140px;
     z-index:300;
+}
+
+#offline-progress-notification {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    margin-left: -280px;
+    margin-top: -140px;
+    z-index:290;
 }

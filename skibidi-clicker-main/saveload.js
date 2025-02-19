@@ -1,4 +1,7 @@
 const save_notif = document.getElementById('save-notification');
+const offline_notif = document.getElementById('offline-progress-notification');
+const offline_notif_time = document.getElementById('offline-notif-time');
+const offline_notif_skibidi = document.getElementById('offline-notif-skibidi');
 
 function isEmpty(obj) {
     for (let i in obj) return false;
@@ -6,10 +9,10 @@ function isEmpty(obj) {
 }
 
 function updateAllVariables(info = {}, mode = 'default') {
-    const sgSU = info[game_scrap_skibidiGainSU] ?? {};
-    const mcSU = info[game_scrap_maxCouponsSU] ?? {};
-    const ubSU = info[game_scrap_upgradeBulkSU] ?? {};
-    const bbSU = info[game_scrap_boostBulkSU] ?? {};
+    const sgSU = info.game_scrap_skibidiGainSU ?? {};
+    const mcSU = info.game_scrap_maxCouponsSU ?? {};
+    const ubSU = info.game_scrap_upgradeBulkSU ?? {};
+    const bbSU = info.game_scrap_boostBulkSU ?? {};
     console.log(sgSU, mcSU, ubSU, bbSU);
     switch (mode) {                                                                     //game_skibidi
         case 'default': game_skibidi = info.game_skibidi ?? 0; break;
@@ -74,45 +77,42 @@ function updateAllVariables(info = {}, mode = 'default') {
     switch (mode) {                                                                          //game_scrap_skibidiGainSU
         case 'default': game_scrap_upgradeBulkSU = (isEmpty(ubSU)? new ScrapUpgrade(6, 6, 0, (x) => (x+2)) : new ScrapUpgrade(ubSU['baseCost'], ubSU['cost'], ubSU['amount'], (x) => (x+2))); break;
         case 'reset': game_scrap_upgradeBulkSU = new ScrapUpgrade(6, 6, 0, (x) => (x+2)); break;
-        case 'force': game_scrap_upgradeBulkSU = new ScrapUpgrade(ubSU['baseCost'], ubSU['cost'], ubSU['amount'], (x) => (x+2)); break;}
+        case 'force': game_scrap_upgradeBulkSU = new ScrapUpgrade(ubSU.baseCost, ubSU.cost, ubSU['amount'], (x) => (x+2)); break;}
     switch (mode) {                                                                          //game_scrap_skibidiGainSU
         case 'default': game_scrap_boostBulkSU = (isEmpty(bbSU)? new ScrapUpgrade(6, 6, 0, (x) => (x+2)) : new ScrapUpgrade(bbSU['baseCost'], bbSU['cost'], bbSU['amount'], (x) => (x+2))); break;
         case 'reset': game_scrap_boostBulkSU = new ScrapUpgrade(6, 6, 0, (x) => (x+2)); break;
-        case 'force': game_scrap_boostBulkSU = new ScrapUpgrade(bbSU['baseCost'], bbSU['cost'], bbSU['amount'], (x) => (x+2)); break;}
+        case 'force': game_scrap_boostBulkSU = new ScrapUpgrade(bbSU.baseCost, bbSU.cost, bbSU.amount, (x) => (x+2)); break;}
 
     const pasArt = info.passiveInventory == undefined? {} : info.passiveInventory.artifacts;  
-    switch (mode) {    
-                                                                              //passiveInventory
+    switch (mode) {                                                          //passiveInventory
         case 'default': 
             passiveInventory = new ArtifactStorage(3, []);
             for (i in pasArt) {
                 passiveInventory.addArtifact(new Artifact(pasArt[i].kind, pasArt[i].effects, pasArt[i].starLevel, pasArt[i].weight, pasArt[i].id));
             }; break;
-
         case 'reset': passiveInventory = new ArtifactStorage(3, []); break;
-
         case 'force': 
             passiveInventory = new ArtifactStorage(3, []);
             for (i in info.passiveInventory.artifacts) {
                 passiveInventory.artifacts.push(new Artifact(i.kind, i.effects, i.starLevel, i.weight, i.id));
             }; break;}
-
     const actArt = info.activeInventory == undefined? {} : info.activeInventory.artifacts;  
-    switch (mode) {                   
-                                                       //activeInventory
+    switch (mode) {                                                         //activeInventory
         case 'default': 
             activeInventory = new ArtifactStorage(3, []);
             for (i in actArt) {
                 activeInventory.addArtifact(new Artifact(actArt[i].kind, actArt[i].effects, actArt[i].starLevel, actArt[i].weight, actArt[i].id));
             }; break;
-
         case 'reset': activeInventory = new ArtifactStorage(3, []); break;
-
         case 'force': 
         activeInventory = new ArtifactStorage(3, []);
             for (i in info.activeInventory.artifacts) {
                 activeInventory.artifacts.push(new Artifact(i.kind, i.effects, i.starLevel, i.weight, i.id));
             }; break;}
+    switch (mode) {                                                                          //game_netSkibidiWorth
+        case 'default': time = info.time ?? Date.now(); break;
+        case 'reset': time = Date.now(); break;
+        case 'force': time = info.time; break;}
 
 }
 
@@ -137,13 +137,12 @@ function getAllVariables() {
         game_scrap_boostBulkSU: game_scrap_boostBulkSU,
         passiveInventory: passiveInventory,
         activeInventory: activeInventory,
+        time: time,
     };
     return info;
 }
 
-function showBadSaveNotif() {
-    save_notif.style = 'display: inline-block';
-}
+function showBadSaveNotif() {save_notif.style = 'display: inline-block';}
 
 function badSaveReset() {
     updateAllVariables({}, 'reset');
@@ -157,54 +156,15 @@ function badSaveDefault() {
     save_notif.style = 'display: none';
 }
 
-function badSaveContinue() {
-    save_notif.style = 'display: none';
-}
+function badSaveContinue() {save_notif.style = 'display: none';}
 
+function offlineContinue() {offline_notif.style = 'display: none';}
 
 function game_saveGame() {
-    // const gameState = {};
-    // for (i of Object.keys(game_const_var_defaults)) {
-    //     gameState[i] = eval(i); // sure hope it works
-    // };
-    // localStorage.setItem('skibidiGame', JSON.stringify(gameState));
     localStorage.setItem('skibidiGame', JSON.stringify(getAllVariables()));
 }
 
 function game_loadGame() {
-    // let gameState = localStorage.getItem('skibidiGame');
-    // if (gameState) {
-    //     gameState = JSON.parse(gameState);
-    //     for (value of Object.keys(game_const_var_defaults)) {
-    //         if (gameState[value] === undefined || gameState[value] === NaN || gameState[value] === null) {
-    //             console.log(gameState[value], value);
-    //             showBadSaveNotif();
-    //         }
-    //     }
-    //     game_skibidi = gameState.game_skibidi;
-    //     game_upgrades = gameState.game_upgrades;
-    //     game_baseUpgradeCost = gameState.game_baseUpgradeCost;
-    //     game_baseSkibidiPerClick = gameState.game_baseSkibidiPerClick;
-    //     game_skibidiBoosts = gameState.game_skibidiBoosts;
-    //     game_baseSkibidiBoostCost = gameState.game_baseSkibidiBoostCost;
-    //     game_skibidiBoostMult = gameState.game_skibidiBoostMult;
-    //     game_passiveModeOn = gameState.game_passiveModeOn;
-    //     game_effs_couponAmount = gameState.game_effs_couponAmount;
-    //     game_effs_couponEffectWeights = gameState.game_effs_couponEffectWeights;
-    //     game_effs_currentWeightSum = gameState.game_effs_currentWeightSum;
-    //     game_netSkibidiWorth = gameState.game_netSkibidiWorth;
-    //     game_scrap_skibidiScrap = gameState.game_scrap_skibidiScrap;
-    //     const sgSU = gameState.game_scrap_skibidiGainSU;
-    //     const mcSU = gameState.game_scrap_maxCouponsSU;
-    //     const ubSU = gameState.game_scrap_upgradeBulkSU;
-    //     const bbSU = gameState.game_scrap_boostBulkSU;
-    //     game_scrap_skibidiGainSU = new ScrapUpgrade(sgSU['baseCost'], sgSU['cost'], sgSU['amount'], (x) => (x+2));
-    //     game_scrap_maxCouponsSU = new ScrapUpgrade(mcSU['baseCost'], mcSU['cost'], mcSU['amount'], (x) => (x+3));
-    //     game_scrap_upgradeBulkSU = new ScrapUpgrade(ubSU['baseCost'], ubSU['cost'], ubSU['amount'], (x) => (x+2));
-    //     game_scrap_boostBulkSU = new ScrapUpgrade(bbSU['baseCost'], bbSU['cost'], bbSU['amount'], (x) => (x+2));
-    //     Effect.effects = []; //TODO: preserve timers. or not.
-    //     Effect.updateMults();
-    // }
     let gameState = JSON.parse(localStorage.getItem('skibidiGame'));
     for (value of Object.keys(getAllVariables())) {
         if (gameState[value] === undefined || gameState[value] === NaN || gameState[value] === null) {
@@ -220,31 +180,17 @@ function game_loadGame() {
     game_updateUI();
 }
 
-function game_resetGame() {
-    game_skibidi = 0;
-    game_upgrades = 0;
-    game_baseUpgradeCost = 50;
-    game_baseSkibidiPerClick = 1;
-    game_skibidiBoosts = 0;
-    game_baseSkibidiBoostCost = 10000;
-    game_skibidiBoostMult = 1;
-    game_passiveModeOn = true;
-    game_effs_couponAmount = 0;
-    game_effs_couponEffectWeights = {
-        getSkibidi:3.5,
-        cheaperUpgrades:1.5,
-        crits:2,
-        productionBoost:2,
-        moreCoupons:1,
-    };
-    game_effs_currentWeightSum = 10;
-    game_netSkibidiWorth = 0;
-    game_scrap_skibidiScrap = 0;
-    Effect.effects = [];
-    game_scrap_skibidiGainSU = new ScrapUpgrade(4, 4, 0, (x) => (x+2));
-    game_scrap_maxCouponsSU = new ScrapUpgrade(6, 6, 0, (x) => (x+3));
-    game_scrap_upgradeBulkSU = new ScrapUpgrade(6, 6, 0, (x) => (x+2));
-    game_scrap_boostBulkSU = new ScrapUpgrade(6, 6, 0, (x) => (x+2));
+function game_resetGame() {updateAllVariables({}, 'reset');}
+
+function game_offlineProgress(milliseconds) {
+    let seconds = Math.floor(milliseconds / 1000);
+    let skibidiGain = game_getSkibidiGain(seconds);
+    offline_notif.style = 'display: inline-block'
+    offline_notif_time.textContent = `Offline for ${seconds} seconds. You have obtained:`
+    offline_notif_skibidi.textContent = `+${normFormat(skibidiGain, 3, 1)} Skibidi`
+
+    game_skibidi += skibidiGain;
+    game_netSkibidiWorth += skibidiGain;
 }
 
 testArt = new Artifact('glubbub', {eff: 5445, ass: 893293}, 23, 52);

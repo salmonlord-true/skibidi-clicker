@@ -26,10 +26,20 @@ let game_currentUpgradeCost = 50;
 let game_baseSkibidiPerClick = 1;
 let game_skibidiBoosts = 0;
 let game_baseSkibidiBoostCost = 10000;
+let game_upgradeCostsMult = 1;
 let game_currentSkibidiBoostCost = 10000;
 let game_skibidiBoostMult = 1;
 let game_passiveModeOn = true;
 let game_netSkibidiWorth = 0;
+let game_upgradeBulk = 1;
+let game_boostBulk = 1;
+let game_SU1SkibidiMult = 1;
+let time;
+
+const game_const_upgradeCostFunc = (x) => (0.5*x**2 + 48.5*x + 1);
+const game_const_cumUpgradeCostFunc = (x) => (1/6 * x**3 + 24.5 * x**2 + 76/3 * x);
+const game_const_boostCostFunc = (x) => (x==1? 10000 : 10000*(0.045 + x + (x-2)**2.2/2.2 + (x-2)**1.2/2))
+const game_const_cumBoostCostFunc = (x) => (10000*(0.045*x + x*(x+1)/2 + 0.5*((x-2)**2.2/2.2 + (x-2)**1.2/2 + 0.045) + 1/2.2*((x-2)**3.2/3.2 + (x-2)**2.2/2 + 0.019*x**1.2)));
 
 const game_const_skibidiCountElement = document.getElementById('skibidi-count');
 const game_const_skibidiButton = document.getElementById('increment-skibidi-button');
@@ -40,37 +50,15 @@ const game_const_boostInfoCostElement = document.getElementById('skibidi-boost-i
 const game_const_boostInfoMultElement = document.getElementById('skibidi-boost-info-2');
 const game_const_playerIdentity = document.getElementById('playerIdentity');
 
-// const game_const_var_defaults = {
-//     game_skibidi: 0,
-//     game_currentUpgradeCost: 50,
-//     game_baseUpgradeCost: 50,
-//     game_baseSkibidiPerClick: 1,
-//     game_skibidiBoosts: 0,
-//     game_baseSkibidiBoostCost: 10000,
-//     game_currentSkibidiBoostCost: 10000,
-//     game_skibidiBoostMult: 1,
-//     game_passiveModeOn: true,
-//     game_effs_couponEffectWeights: {
-//         getSkibidi:3.5,
-//         cheaperUpgrades:1.5,
-//         crits:2,
-//         productionBoost:2,
-//         moreCoupons:1,
-//     },
-//     game_effs_couponAmount: 0,
-//     game_effs_currentWeightSum: 10,
-//     game_scrap_skibidiScrap: 0,
-//     game_netSkibidiWorth: game_skibidi + game_upgrades * game_baseUpgradeCost / 2 + game_skibidiBoosts * game_baseUpgradeCost / 2, //estimation. why am i doing this no one will ever have this problem
-//     game_scrap_skibidiGainSU: new ScrapUpgrade(4, 4, 0, (x) => (x+2)),
-//     game_scrap_maxCouponsSU: new ScrapUpgrade(6, 6, 0, (x) => (x+3)),
-//     game_scrap_upgradeBulkSU: new ScrapUpgrade(6, 6, 0, (x) => (x+2)),
-//     game_scrap_boostBulkSU: new ScrapUpgrade(6, 6, 0, (x) => (x+2)),
-// }
-
 function game_updateUI() {
-    game_currentUpgradeCost = game_baseUpgradeCost / Effect.upgradeCostMult;
-    game_currentSkibidiBoostCost = game_baseSkibidiBoostCost / Effect.upgradeCostMult;
-    game_scrap_skibidiScrapCost = 1e9 * 1.5**game_scrap_skibidiScrap
+    game_upgradeCostsMult = 1 / Effect.upgradeCostMult;
+    game_currentUpgradeCost = game_baseUpgradeCost * game_upgradeCostsMult;
+    game_currentSkibidiBoostCost = game_baseSkibidiBoostCost * game_upgradeCostsMult;
+    game_scrap_skibidiScrapCost = 1e9 * 1.5**game_scrap_skibidiScrap;
+    game_upgradeBulk = Math.round(1 + game_scrap_upgradeBulkSU.amount * 1.3**game_scrap_upgradeBulkSU.amount);
+    game_boostBulk = Math.round(1 + game_scrap_boostBulkSU.amount * 1.25**game_scrap_boostBulkSU.amount);
+    game_SU1SkibidiMult = 1.2**game_scrap_skibidiGainSU.amount;
+    game_effs_maxCoupons = 1 + game_scrap_maxCouponsSU.amount;
 
     game_const_skibidiCountElement.textContent = `Skibidi: ${normFormat(game_skibidi, 3, 1)}`;
     game_const_upgradeInfoElement.textContent = `Upgrade cost: ${normFormat(game_currentUpgradeCost, 3, 1)} | Power: ${normFormat(game_upgrades+1, 3, 1)}`;
@@ -79,11 +67,19 @@ function game_updateUI() {
     game_const_boostInfoMultElement.textContent = `Skibidi multiplier: x${normFormat(game_skibidiBoostMult, 3, 1)} | Next: x${normFormat(game_skibidiBoostMult + 0.3 + game_skibidiBoosts / 10, 3, 1)}`;
     game_const_skibidiBoostButton.disabled = game_skibidi < game_currentSkibidiBoostCost;
     game_const_skibidiCouponButton.disabled = (game_effs_couponAmount <= 0);
-    game_const_skibidiCouponInfoElement.textContent = `Current amount: ${game_effs_couponAmount}/1`;
+    game_const_skibidiCouponInfoElement.textContent = `Current amount: ${game_effs_couponAmount}/${game_effs_maxCoupons}`;
     game_const_playerIdentity.textContent = `${game_getPlayerIdentity()}`;
     game_const_skibidiScrapButton.disabled = game_skibidi < game_scrap_skibidiScrapCost;
     game_const_skibidiScrapInfoElement.textContent = `You have ${game_scrap_skibidiScrap} Skibidi Scrap.`;
     game_const_skibidiScrapCostElement.textContent = `(Cost: ${normFormat(game_scrap_skibidiScrapCost, 3, 1)})`;
+    game_const_SU1InfoElement.textContent = `Cost: ${game_scrap_skibidiGainSU.cost} Scrap | Bought: ${game_scrap_skibidiGainSU.amount} (Effect: x${normFormat(1.2**game_scrap_skibidiGainSU.amount, 3, 1)})`;
+    game_const_SU2InfoElement.textContent = `Cost: ${game_scrap_maxCouponsSU.cost} Scrap | Bought: ${game_scrap_maxCouponsSU.amount}`;
+    game_const_SU3InfoElement.textContent = `Cost: ${game_scrap_upgradeBulkSU.cost} Scrap | Bought: ${game_scrap_upgradeBulkSU.amount} (Effect: ${normFormat(game_upgradeBulk, 3, 1)})`;
+    game_const_SU4InfoElement.textContent = `Cost: ${game_scrap_boostBulkSU.cost} Scrap | Bought: ${game_scrap_boostBulkSU.amount} (Effect: ${normFormat(game_boostBulk, 3, 1)})`;
+    game_const_SU1Button.disabled = game_scrap_skibidiScrap < game_scrap_skibidiGainSU.cost;
+    game_const_SU2Button.disabled = game_scrap_skibidiScrap < game_scrap_maxCouponsSU.cost;
+    game_const_SU3Button.disabled = game_scrap_skibidiScrap < game_scrap_upgradeBulkSU.cost;
+    game_const_SU4Button.disabled = game_scrap_skibidiScrap < game_scrap_boostBulkSU.cost;
     game_checkLockedFeatures();
     Effect.updateMults();
 }
@@ -125,12 +121,12 @@ function game_checkLockedFeatures() {
 }
 
 function game_incrementSkibidi(multiplier = 1, manual = 0) {
-    const critMult = 1 + (Effect.critClickMult-1)*(manual == 1 && Math.random() <= Effect.critChance)
-    game_skibidi += game_baseSkibidiPerClick * game_skibidiBoostMult * multiplier * Effect.skibidiProductionMult * critMult;
-    game_netSkibidiWorth += game_baseSkibidiPerClick * game_skibidiBoostMult * multiplier * Effect.skibidiProductionMult * critMult;
+    const isCrit = (manual == 1 && Math.random() <= Effect.critChance)
+    game_skibidi += game_getSkibidiGain(multiplier, isCrit);
+    game_netSkibidiWorth += game_getSkibidiGain(multiplier, isCrit);
     if (manual == 1) {
         for (i = 0; i < multiplier; i++) {
-            if (game_netSkibidiWorth >= 1e9 && game_effs_couponAmount < 1 && Math.random() <= Effect.couponChance) {
+            if (game_netSkibidiWorth >= 1e9 && game_effs_couponAmount < game_effs_maxCoupons && Math.random() <= Effect.couponChance) {
                 game_effs_couponAmount++;
                 new Notification('You found a Coupon!', 'yellow');
             } 
@@ -140,53 +136,87 @@ function game_incrementSkibidi(multiplier = 1, manual = 0) {
     game_updateUI();
 }
 
+function game_getSkibidiGain(multiplier = 1, isCrit = false) {
+    let gain = 1;
+    gain *= game_baseSkibidiPerClick;
+    gain *= game_skibidiBoostMult;
+    gain *= multiplier;
+    gain *= Effect.skibidiProductionMult;
+    gain *= game_SU1SkibidiMult;
+    isCrit? gain *= Effect.critClickMult : gain;
+    return gain;
+}
+
 function game_buySkibidiPower(amount = 1) {
-    if (amount < 50) {
-        for (i = 0; i < amount; i++) {
-            if (game_skibidi >= game_currentUpgradeCost) {
-                game_skibidi -= game_currentUpgradeCost;
-                game_baseUpgradeCost += 50 + game_upgrades;
-                game_upgrades++;
-                game_baseSkibidiPerClick++;
-                game_updateUI();
-            } else return;
+    let tryToBuy = (x) => {   //the buying function
+        let step = Math.max(1, x/100), num;    //the step is either 1 or bulk/100, whatever's larger
+        // console.log(`x = ${x}`)
+        // console.log(`step = ${step}`)
+        for (i = 1; i <= 100 && i <= x; i++) {
+            num = Math.floor(step*(i+1)) - Math.floor(step*i); //amount purchased in each step
+            // console.log(`num = ${num}`)
+            if (game_skibidi >= num*game_const_upgradeCostFunc(game_upgrades + num/2 + 0.5)*game_upgradeCostsMult) {  // step cost = average cost * step size
+                game_skibidi -= num*game_const_upgradeCostFunc(game_upgrades + num/2 + 0.5)*game_upgradeCostsMult;
+                game_upgrades += num;
+                game_baseSkibidiPerClick += num;
+                game_baseUpgradeCost = game_const_upgradeCostFunc(game_upgrades + 1);
+            } else {
+                if (x > 1 && step > game_upgrades / 1e7) {tryToBuy(x/100); return} // recursive buying
+                else {
+                    game_updateUI();
+                    return;
+                }
+            }
+            };
         }
-    } else { //approximation for bulk purchases
-        approximateRoots('skibipower', )
-    } 
+    tryToBuy(amount);
+    game_updateUI();
 }
 
 
 function approximateRoots(equName, rhs, steps, spent=undefined, guess=undefined) { // equation name out of 'skibipower' and 'skibiboost'; right-hand side; approximation steps (Newton method)
-    let costFunc, costFuncDeriv;         // 6 steps for skibipower, 8 steps for skibiboost.
+    let costFunc, costFuncDeriv;         // 7 steps for skibipower, 9 steps for skibiboost.
     if (equName == 'skibipower') {
-        spent = spent ?? (1/6 * game_upgrades**3 + 24.5 * game_upgrades**2 + 76/3 * game_upgrades);
-        costFunc = (x) => (1/6 * x**3 + 24.5 * x**2 + 76/3 * x - (rhs + spent));
+        spent = (spent ?? game_const_cumUpgradeCostFunc(game_upgrades));
+        costFunc = game_const_cumUpgradeCostFunc;
         costFuncDeriv = (x) => (1/2 * x**2 + 49 * x + 76/3);
         guess = guess ?? Math.cbrt(6*rhs);
     }
     if (equName == 'skibiboost') {
         //costFunc = (x) => 10000*((x-2)**2.2/2.2 + (x-2)**1.2/2 + 0.045 + x); // cost of n'th skibiboost
-        spent = spent ?? 10000*(0.045*game_skibidiBoosts + game_skibidiBoosts*(game_skibidiBoosts+1)/2 + 0.5*((game_skibidiBoosts-2)**2.2/2.2 + (game_skibidiBoosts-2)**1.2/2 + 0.045) + 1/2.2*((game_skibidiBoosts-2)**3.2/3.2 + (game_skibidiBoosts-2)**2.2/2 + 0.019*game_skibidiBoosts**1.2));
-        costFunc = (x) => (10000*(0.045*x + x*(x+1)/2 + 0.5*((x-2)**2.2/2.2 + (x-2)**1.2/2 + 0.045) + 1/2.2*((x-2)**3.2/3.2 + (x-2)**2.2/2 + 0.019*x**1.2)) - (rhs + spent)); // cumulative cost of first n skibiboosts
+        spent = spent ?? 10000*game_const_cumBoostCostFunc(game_skibidiBoosts);
+        costFunc = (x) => game_const_cumBoostCostFunc; // cumulative cost of first n skibiboosts
         costFuncDeriv = (x) => (10000*(0.045 + x+0.5 + 0.5*((x-2)**1.2/2.2*2.2 + (x-2)**0.2/2*1.2) + 1/2.2*((x-2)**2.2/3.2*3.2 + (x-2)*1.2/2*2.2 + 0.019*x**0.2*1.2)));
         guess = guess ?? rhs**(1/3.2)/10;   //note: can return NaN if trying to purchase a very small amount of boosts
     }
     for (i = 0; i < steps; i++) {
         console.log(guess);
-        guess = guess - (costFunc(guess)/costFuncDeriv(guess) != NaN? costFunc(guess)/costFuncDeriv(guess) : -1);
+        guess = guess - (costFunc(guess) - (rhs + spent))/costFuncDeriv(guess); // the NaN check doesn't work :(
     }
     return guess;
 }
 
-function game_buySkibidiBoost() {
-    if (game_skibidi >= game_currentSkibidiBoostCost) {
-        game_skibidi -= game_currentSkibidiBoostCost;
-        game_baseSkibidiBoostCost += 10000 * (game_skibidiBoosts ** 1.2 + 1);
-        game_skibidiBoostMult += 0.3 + 0.1 * game_skibidiBoosts;
-        game_skibidiBoosts++;
-        game_updateUI();
-    }
+function game_buySkibidiBoost(amount = 1) {
+    let tryToBuy = (x) => {   //look at upgrade bulk buy function for comments
+        let step = Math.max(1, x/100), num;
+        for (i = 1; i <= 100 && i <= x; i++) {
+            num = Math.floor(step*(i+1)) - Math.floor(step*i);
+            if (game_skibidi >= num*game_const_boostCostFunc(game_skibidiBoosts + num/2 + 0.5)*game_upgradeCostsMult) {
+                game_skibidi -= num*game_const_boostCostFunc(game_skibidiBoosts + num/2 + 0.5)*game_upgradeCostsMult;
+                game_skibidiBoosts += num;
+                game_skibidiBoostMult = 1 + 0.25*game_skibidiBoosts + 0.05*game_skibidiBoosts**2;
+                game_baseSkibidiBoostCost = game_const_boostCostFunc(game_skibidiBoosts + 1);
+            } else {
+                if (x > 1 && step > game_skibidiBoosts / 1e7) {tryToBuy(x/100); return}
+                else {
+                    game_updateUI();
+                    return;
+                }
+            }
+            };
+        }
+    tryToBuy(amount);
+    game_updateUI();
 }
 
 game_const_skibidiButton.addEventListener('click', () => {
@@ -194,11 +224,11 @@ game_const_skibidiButton.addEventListener('click', () => {
 });
 
 game_const_upgradeButton.addEventListener('click', () => {
-    game_buySkibidiPower();
+    game_buySkibidiPower(game_upgradeBulk);
 });
 
 game_const_skibidiBoostButton.addEventListener('click', () => {
-    game_buySkibidiBoost();
+    game_buySkibidiBoost(game_boostBulk);
 });
 
 game_const_skibidiCouponButton.addEventListener('click', () => {
@@ -209,28 +239,35 @@ game_const_skibidiScrapButton.addEventListener('click', () => {
     game_scrap_buySkibidiScrap();
 });
 
-game_const_skibidiScrapUpgrade1Button.addEventListener('click', () => {
+game_const_SU1Button.addEventListener('click', () => {
     game_scrap_skibidiGainSU.buyUpgrade(1);
+    game_updateUI();
 });
 
-game_const_skibidiScrapUpgrade2Button.addEventListener('click', () => {
+game_const_SU2Button.addEventListener('click', () => {
     game_scrap_maxCouponsSU.buyUpgrade(1);
+    game_updateUI();
 });
 
-game_const_skibidiScrapUpgrade3Button.addEventListener('click', () => {
+game_const_SU3Button.addEventListener('click', () => {
     game_scrap_upgradeBulkSU.buyUpgrade(1);
+    game_updateUI();
 });
 
-game_const_skibidiScrapUpgrade4Button.addEventListener('click', () => {
+game_const_SU4Button.addEventListener('click', () => {
     game_scrap_boostBulkSU.buyUpgrade(1);
+    game_updateUI();
 });
 
 setInterval(() => {
+    if (time != undefined && Date.now() - time >= 10000) {game_offlineProgress(Date.now() - time)}
+    time = Date.now();
     if (game_passiveModeOn) {
         game_incrementSkibidi(1, 0);
     }
     game_saveGame();
 }, 1000);
 
+if (time != undefined && Date.now() - time >= 10000) {game_offlineProgress(Date.now() - time)}
 game_loadGame();
 game_updateUI(); 

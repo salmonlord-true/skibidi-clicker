@@ -7,6 +7,7 @@ let game_effs_couponEffectWeights = {
     moreCoupons:1,
 };
 let game_effs_currentWeightSum = 10;
+let game_effs_maxCoupons = 1;
 
 const game_const_point1 = (game_effs_couponEffectWeights['getSkibidi'])/game_effs_currentWeightSum;
 const game_const_point2 = (game_effs_couponEffectWeights['getSkibidi']+game_effs_couponEffectWeights['cheaperUpgrades'])/game_effs_currentWeightSum;
@@ -26,7 +27,6 @@ function game_effs_getCouponEffectWeightSum() {
 
 function game_effs_doSkibidiCouponRoll() {
     if (game_effs_couponAmount > 0) {
-        game_updateUI();
         game_effs_currentWeightSum = game_effs_getCouponEffectWeightSum();
         game_effs_couponAmount--;
         let random = Math.random();
@@ -41,6 +41,7 @@ function game_effs_doSkibidiCouponRoll() {
         } else if (game_const_point4 < random && random < 1) {
             new Effect('couponChanceBoost', Effect.baseCouponChance, 30000, true);
         };
+        game_updateUI();
     }
 }
 

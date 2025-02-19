@@ -4,10 +4,14 @@ let game_scrap_skibidiScrapCost = 1e9;
 const game_const_skibidiScrapButton = document.getElementById('skibidi-scrap-button');
 const game_const_skibidiScrapInfoElement = document.getElementById('skibidi-scrap-info');
 const game_const_skibidiScrapCostElement = document.getElementById('skibidi-scrap-info-2');
-const game_const_skibidiScrapUpgrade1Button = document.getElementById('skibidi-scrap-upgrade-1-button');
-const game_const_skibidiScrapUpgrade2Button = document.getElementById('skibidi-scrap-upgrade-2-button');
-const game_const_skibidiScrapUpgrade3Button = document.getElementById('skibidi-scrap-upgrade-3-button');
-const game_const_skibidiScrapUpgrade4Button = document.getElementById('skibidi-scrap-upgrade-4-button');
+const game_const_SU1Button = document.getElementById('skibidi-scrap-upgrade-1-button');
+const game_const_SU2Button = document.getElementById('skibidi-scrap-upgrade-2-button');
+const game_const_SU3Button = document.getElementById('skibidi-scrap-upgrade-3-button');
+const game_const_SU4Button = document.getElementById('skibidi-scrap-upgrade-4-button');
+const game_const_SU1InfoElement = document.getElementById('skibidi-scrap-upgrade-1-info');
+const game_const_SU2InfoElement = document.getElementById('skibidi-scrap-upgrade-2-info');
+const game_const_SU3InfoElement = document.getElementById('skibidi-scrap-upgrade-3-info');
+const game_const_SU4InfoElement = document.getElementById('skibidi-scrap-upgrade-4-info');
 
 function game_scrap_buySkibidiScrap() {
     if (game_skibidi >= game_scrap_skibidiScrapCost) {
@@ -19,10 +23,10 @@ function game_scrap_buySkibidiScrap() {
 
 class ScrapUpgrade {
 
-    constructor(baseCost, currentCost = baseCost, currentAmount = 0, scaling = (x) => (x+2)) {
+    constructor(baseCost, currentCost = baseCost, currentAmount = 0, scaling = (x) => (x)) {
         this.baseCost = baseCost;
         this.cost = currentCost;
-        this.currentAmount = currentAmount;
+        this.amount = currentAmount;
         this.scaling = scaling;
     }
 
